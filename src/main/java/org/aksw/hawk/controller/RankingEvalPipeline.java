@@ -181,6 +181,78 @@ public class RankingEvalPipeline {
 		annotater.annotateTree(q);
 		log.info(q.tree.toString());
 
+		// Map<String, Answer> answer = Maps.newHashMap();
+		Map<String, Answer> answers = queryBuilder.build(q); // build-Methode benötigt nun auch ranker
+		
+		// Project Semantic Web Modul 
+		
+		// creating arrays out of map
+	    String[] arr1 = new String[answers.size()];
+	    String[] arr2 = new String[answers.size()];
+	    Set entries = answers.entrySet();
+	    Iterator entriesIterator = entries.iterator();
+
+	    int i = 0;
+	    while(entriesIterator.hasNext())
+	    {
+
+	        Map.Entry mapping = (Map.Entry) entriesIterator.next();
+
+	        arr1[i] = mapping.getKey().toString();
+	        arr2[i] = mapping.getValue().toString();
+
+	        i++;
+	    }
+		
+	    int lengthOne=arr1.length;
+	    
+	    //searching for best answer
+	    int j=0;
+	    String solutionOne;
+	    for (j<lengthOne)
+	    { 
+	    	if (arr1[j].length() <= arr1[j+1].length())
+	    	{
+	    	   solutionOne=arr1[j];
+	    	}
+	    	
+	    	j++;
+	    }
+	    
+	    // searching for worst answer
+	     int k=0;
+	     String solutionTwo;
+	    for (k<lengthOne)
+	    { 
+	    	if (arr1[k].length() >= arr1[k+1].length())
+	    	{
+	    	  solutionTwo=arr1[k];
+	    	}
+	    	
+	    	k++;
+	    }
+	    
+	    // getting average string-length
+	    int averagesolution=((solutionOne.length()+solutionTwo.length())/2);
+	    
+	    //getting all solutions, that are better than average
+	    int l=0;
+	    int m=0;
+	    String[] goodSolutions= new String[averagesolution];
+	     for (l<lengthOne)
+	      {
+	       if (arr1[l].length()<=averagesolution)
+	          { goodSolutions[m]=arr1[l];
+	                  m++;
+	                  l++;
+	            }
+	           else l++;
+	      }
+	  
+	    
+	    // end of Project
+	    
+		
 		Map<String, Answer> answer = queryBuilder.buildWithRanking(q, ranker);
 		return answer;
 	}
